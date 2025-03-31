@@ -19,7 +19,7 @@ router.get("/:id", async (req, res) => {
     const movieId = req.params.id;
     const movie = await db.collection("WPMovies").doc(movieId).get();
     if (!movie.exists) {
-      res.status(404).json({ error: "Movie not found!" });
+      res.status(404).json({ error: "Pelicula no encontrada!" });
       return;
     }
     res.status(200).json({ ...movie.data() });

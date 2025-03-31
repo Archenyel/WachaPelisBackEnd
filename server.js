@@ -17,12 +17,14 @@ const authRoutes = require("./routes/auth");
 const movieRoutes = require("./routes/movies");
 const reviewRoutes = require("./routes/reviews");
 const listRoutes = require("./routes/lists");
+const sseRoutes = require("./routes/sse");
 
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/movies", movieRoutes);
 app.use("/reviews", reviewRoutes);
 app.use("/lists", listRoutes);
+app.use("/sse", sseRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend conectado a Firebase");

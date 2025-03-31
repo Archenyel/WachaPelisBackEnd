@@ -1,8 +1,7 @@
 const express = require("express");
 const admin = require("firebase-admin");
 const cors = require("cors");
-
-const serviceAccount = require("../claves/desarrolloweb-d9056-firebase-adminsdk-fbsvc-af83eed8a5.json");
+const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS_JSON);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

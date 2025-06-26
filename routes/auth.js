@@ -1,17 +1,17 @@
 const express = require("express");
 const admin = require("firebase-admin");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 const db = admin.firestore();
 const SECRET_KEY = "patata";
 const crypto = require("crypto");
-const nodemailer = require("nodemailer");
 
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-  const userRef = db.collection("WPUsers").where("email", "==", email);
+  const { usuario, password } = req.body;
+  console.log("Login attempt:", usuario);
+  console.log("Password attempt:", password);
+  const userRef = db.collection("usuarios").where("usuario", "==", usuario);
   const userSnapshot = await userRef.get();
 
   if (userSnapshot.empty) {
@@ -20,71 +20,20 @@ router.post("/login", async (req, res) => {
 
   const userDoc = userSnapshot.docs[0];
   const user = userDoc.data();
+  
+  console.log("User found:", user);
+  
+  //const isMatch = await bcrypt.compare(password, user.password);
 
-  const isMatch = await bcrypt.compare(password, user.password);
+  //if (!isMatch) {
+  //  return res.status(401).json({ error: "Credenciales incorrectas" });
+  //}
 
-  if (!isMatch) {
+  if (user.password !== password) {
     return res.status(401).json({ error: "Credenciales incorrectas" });
   }
 
-  // Generar código 2FA
-  const code = crypto.randomInt(100000, 999999).toString();
-  await db.collection("2fa_codes").doc(userDoc.id).set({
-    code,
-    createdAt: new Date(),
-  });
-
-  // Enviar código por email
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: "bluebearinnovations@gmail.com",
-      pass: "vtrv sbus hjjw chce",
-    },
-  });
-
-  await transporter.sendMail({
-    from: "tuemail@gmail.com",
-    to: email,
-    subject: "Tu código de autenticación de WACHA PELIS",
-    text: `Tu código de verificación es: ${code}`,
-  });
-
-  res.json({ message: "Código enviado al correo", userId: userDoc.id });
-});
-
-router.post("/verify-2fa", async (req, res) => {
-  const { userId, code } = req.body;
-  const codeRef = db.collection("2fa_codes").doc(userId);
-  const userRef = db.collection("WPUsers").doc(userId);
-  const userSnapshot = await userRef.get();
-  const codeSnapshot = await codeRef.get();
-
-  if (!codeSnapshot.exists) {
-    return res.status(400).json({ error: "Código no encontrado o expirado" });
-  }
-
-  const storedCode = codeSnapshot.data();
-  const createdAt = storedCode.createdAt.toDate();
-  const now = new Date();
-  const expirationTime = 5 * 60 * 1000;
-
-  const user = userSnapshot.data();
-
-  if (now - createdAt > expirationTime) {
-    await codeRef.delete();
-    return res.status(401).json({ error: "Código expirado" });
-  }
-
-  if (storedCode.code !== code) {
-    return res.status(401).json({ error: "Código incorrecto" });
-  }
-
-  const token = jwt.sign({ userId }, "secreto", { expiresIn: "1h" });
-
-  await codeRef.delete();
-
-  res.json({ token, user: user.name, role: user.role, userId });
+  res.status(200).json({ message: "Login correcto", rol: user.rol });
 });
 
 router.post("/register", async (req, res) => {

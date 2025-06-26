@@ -2,6 +2,7 @@ const express = require("express");
 const admin = require("firebase-admin");
 const cors = require("cors");
 const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS_JSON);
+//const serviceAccount = require("../claves/firebaseClave.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

@@ -6,7 +6,7 @@ const db = admin.firestore();
 
 router.get("/", async (req, res) => {
   try {
-    const snapshot = await db.collection("WPUsers").get();
+    const snapshot = await db.collection("usuarios").get();
     const users = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
     res.json(users);
@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const doc = await db.collection("WPUsers").doc(id).get();
+    const doc = await db.collection("usuarios").doc(id).get();
     if (!doc.exists) {
       return res.status(404).json({ error: "usuario no encontrado" });
     }
@@ -30,10 +30,10 @@ router.get("/:id", async (req, res) => {
 
 router.patch("/:id", async (req, res) => {
   const { id } = req.params;
-  const { name, phone, address } = req.body;
+  const { usuario, rol } = req.body;
   try {
-    const docRef = db.collection("WPUsers").doc(id);
-    await docRef.update({ name, phone, address });
+    const docRef = db.collection("usuarios").doc(id);
+    await docRef.update({ usuario, rol });
     res.json({ message: "Datos actualizados correctamente" });
   } catch (error) {
     res.status(500).json({ error: error.message });

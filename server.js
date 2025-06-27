@@ -1,8 +1,10 @@
 const express = require("express");
 const admin = require("firebase-admin");
 const cors = require("cors");
-const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS_JSON);
-//const serviceAccount = require("../claves/firebaseClave.json");
+//Claves para desarrollo
+//const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS_JSON);
+//Claves para produccion
+const serviceAccount = require("../claves/firebaseClave.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -14,17 +16,13 @@ app.use(express.json());
 
 const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
-const movieRoutes = require("./routes/movies");
-const reviewRoutes = require("./routes/reviews");
-const listRoutes = require("./routes/lists");
-const sseRoutes = require("./routes/sse");
+const taskRoutes = require("./routes/tareas");
 
-app.use("/users", userRoutes);
+
+app.use("/usuarios", userRoutes);
 app.use("/auth", authRoutes);
-app.use("/movies", movieRoutes);
-app.use("/reviews", reviewRoutes);
-app.use("/lists", listRoutes);
-app.use("/sse", sseRoutes);
+app.use("/tareas", taskRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("Backend conectado a Firebase");

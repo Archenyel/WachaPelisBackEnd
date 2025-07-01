@@ -35,7 +35,43 @@ router.post("/login", async (req, res) => {
   res.status(200).json({ message: "Login correcto", rol: user.rol });
 });
 
-router.post("/registro", async (req, res) => {
+router.post("/registro/alumnos", async (req, res) => {
+  const { usuario, password, rol, nombre, apellidos, email, telefono, fechaNacimiento, matricula, carrera, semestre, campus  } = req.body;
+
+
+  const userRef = db.collection("usuarios").where("usuario", "==", usuario);
+  const userSnapshot = await userRef.get();
+  if (!userSnapshot.empty) {
+    return res.status(400).json({ error: "El usuario ya existe" });
+  }
+
+  //const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = {
+    usuario,
+    //password: hashedPassword,
+    password,
+    rol: "alumno",
+    nombre,
+    apellidos,
+    email,
+    telefono,
+    fechaNacimiento,
+    matricula,
+    carrera,
+    semestre,
+    campus
+  };
+
+  try {
+    await db.collection("usuarios").add(newUser);
+    res.status(201).json({ message: "Usuario registrado correctamente" });
+  } catch (error) {
+    console.error("Error al registrar el usuario:", error);
+    res.status(500).json({ error: "Error al registrar el usuario" });
+  }
+});
+
+router.post("/registro/admins", async (req, res) => {
   const { usuario, password, rol } = req.body;
 
   const userRef = db.collection("usuarios").where("usuario", "==", usuario);

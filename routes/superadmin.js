@@ -5,10 +5,8 @@ const router = express.Router();
 const db = admin.firestore();
 
 router.get("/", async (req, res) => {
-  console.log(req.query);
-  const { rol } = req.query;
   try {
-    const snapshot = await db.collection("usuarios").where("rol", "==", rol).get();
+    const snapshot = await db.collection("usuarios").get();
     const users = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
     res.json(users);
@@ -30,29 +28,16 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.patch("/editadmin/:id", async (req, res) => {
+router.patch("/:id", async (req, res) => {
   const { id } = req.params;
-  const { usuario, email } = req.body;
-  const password = req.body.password || null;
-
-  if (password) {
-    await db.collection("usuarios").doc(id).update({
-      usuario,
-      email,
-      password,
-    });
-  }
-
+  const { usuario, rol } = req.body;
   try {
-    await db.collection("usuarios").doc(id).update({
-      usuario,
-      email,
-    });
-    res.json({ message: "Usuario actualizado correctamente" });
+    const docRef = db.collection("usuarios").doc(id);
+    await docRef.update({ usuario, rol });
+    res.json({ message: "Datos actualizados correctamente" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-
 });
 
 

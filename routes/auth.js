@@ -20,8 +20,6 @@ router.post("/login", async (req, res) => {
   const userDoc = userSnapshot.docs[0];
   const user = userDoc.data();
 
-  console.log("User found:", user);
-
   //const isMatch = await bcrypt.compare(password, user.password);
 
   //if (!isMatch) {
@@ -50,7 +48,7 @@ router.post("/registro/alumnos", async (req, res) => {
     usuario,
     //password: hashedPassword,
     password,
-    rol: "alumno",
+    rol: "2",
     nombre,
     apellidos,
     email,
@@ -66,13 +64,12 @@ router.post("/registro/alumnos", async (req, res) => {
     await db.collection("usuarios").add(newUser);
     res.status(201).json({ message: "Usuario registrado correctamente" });
   } catch (error) {
-    console.error("Error al registrar el usuario:", error);
     res.status(500).json({ error: "Error al registrar el usuario" });
   }
 });
 
 router.post("/registro/admins", async (req, res) => {
-  const { usuario, password, rol } = req.body;
+  const { usuario, password, email } = req.body;
 
   const userRef = db.collection("usuarios").where("usuario", "==", usuario);
   const userSnapshot = await userRef.get();
@@ -84,16 +81,33 @@ router.post("/registro/admins", async (req, res) => {
   const newUser = {
     usuario,
     //password: hashedPassword,
+    email,
     password,
-    rol,
+    rol: "1",
   };
 
   try {
     await db.collection("usuarios").add(newUser);
     res.status(201).json({ message: "Usuario registrado correctamente" });
   } catch (error) {
-    console.error("Error al registrar el usuario:", error);
     res.status(500).json({ error: "Error al registrar el usuario" });
+  }
+});
+
+router.delete("/eliminar/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const userRef = db.collection("usuarios").doc(id);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    await userRef.delete();
+    res.status(200).json({ message: "Usuario eliminado correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: "Error al eliminar el usuario" });
   }
 });
 

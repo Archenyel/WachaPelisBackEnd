@@ -5,7 +5,6 @@ const router = express.Router();
 const db = admin.firestore();
 
 router.get("/", async (req, res) => {
-  console.log(req.query);
   const { rol } = req.query;
   try {
     const snapshot = await db.collection("usuarios").where("rol", "==", rol).get();

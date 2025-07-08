@@ -17,11 +17,13 @@ app.use(express.json());
 const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
 const taskRoutes = require("./routes/tareas");
+const projectRoutes = require("./routes/proyectos");
 
 
 app.use("/usuarios", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/tareas", taskRoutes);
+app.use("/proyectos", projectRoutes);
 
 
 app.get("/", (req, res) => {

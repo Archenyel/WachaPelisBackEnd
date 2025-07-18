@@ -34,7 +34,7 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/registro/alumnos", async (req, res) => {
-  const { usuario, password, rol, nombre, apellidos, email, telefono, fechaNacimiento, matricula, carrera, semestre, campus  } = req.body;
+  const { nombre, apellidos, email, usuario, password, matricula, carrera, cuatrimestre } = req.body;
 
 
   const userRef = db.collection("usuarios").where("usuario", "==", usuario);
@@ -52,12 +52,9 @@ router.post("/registro/alumnos", async (req, res) => {
     nombre,
     apellidos,
     email,
-    telefono,
-    fechaNacimiento,
     matricula,
     carrera,
-    semestre,
-    campus
+    cuatrimestre,
   };
 
   try {

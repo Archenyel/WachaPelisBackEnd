@@ -29,8 +29,8 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/nuevaTarea", async (req, res) => {
-  const { titulo, descripcion, estado } = req.body;
-  const newTask = { titulo, descripcion, estado };
+  const { titulo, descripcion, estado, proyecto } = req.body;
+  const newTask = { titulo, descripcion, estado, proyecto };
 
   try {
     const docRef = await db.collection("tareas").add(newTask);
@@ -67,10 +67,10 @@ router.delete("/:id", async (req, res) => {
 
 router.patch("/:id", async (req, res) => {
   const { id } = req.params;
-  const { titulo, descripcion, estado } = req.body;
+  const { titulo, descripcion, estado, proyecto } = req.body;
   try {
     const docRef = db.collection("tareas").doc(id);
-    await docRef.update({ titulo, descripcion, estado });
+    await docRef.update({ titulo, descripcion, estado, proyecto });
     res.json({ message: "Tarea actualizada correctamente" });
   } catch (error) {
     res.status(500).json({ error: error.message });

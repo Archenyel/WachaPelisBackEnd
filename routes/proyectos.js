@@ -29,7 +29,7 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { nombre, descripcion, inicio, entrega, encargado } = req.body;
+  const { nombre, descripcion, inicio, entrega, encargado, programa } = req.body;
 
   const newProject = {
     nombre,
@@ -37,6 +37,7 @@ router.post("/", async (req, res) => {
     inicio,
     entrega,
     encargado,
+    programa,
   };
 
   try {
@@ -49,11 +50,11 @@ router.post("/", async (req, res) => {
 
 router.patch("/:id", async (req, res) => {
   const { id } = req.params;
-  const { nombre, descripcion, inicio, entrega, encargado } = req.body;
+  const { nombre, descripcion, inicio, entrega, encargado,programa } = req.body;
 
   try {
     const docRef = db.collection("proyectos").doc(id);
-    await docRef.update({ nombre, descripcion, inicio, entrega, encargado });
+    await docRef.update({ nombre, descripcion, inicio, entrega, encargado, programa });
     res.json({ message: "Proyecto actualizado correctamente" });
   } catch (error) {
     res.status(500).json({ error: error.message });

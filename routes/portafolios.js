@@ -34,6 +34,7 @@ router.post("/", async (req, res) => {
   const newPortafolio = {
     nombre,
     descripcion,
+    fechaCreacion: new Date().toISOString()
   };
 
   try {
@@ -44,14 +45,14 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { nombre, descripcion } = req.body;
 
   try {
     const docRef = db.collection("portafolios").doc(id);
     await docRef.update({ nombre, descripcion });
-    res.json({ message: "Portafolio actualizado correctamente" });
+    res.json({ message: "Portafolio actualizado correctamente", data: { id, nombre, descripcion } });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

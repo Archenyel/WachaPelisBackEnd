@@ -18,13 +18,16 @@ const userRoutes = require("./routes/users");
 const authRoutes = require("./routes/auth");
 const taskRoutes = require("./routes/tareas");
 const projectRoutes = require("./routes/proyectos");
+const portafoliosRoutes = require("./routes/portafolios");
+const programasRoutes = require("./routes/programas");
 
 
 app.use("/usuarios", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/tareas", taskRoutes);
 app.use("/proyectos", projectRoutes);
-
+app.use("/portafolios", portafoliosRoutes);
+app.use("/programas", programasRoutes);
 
 app.get("/", (req, res) => {
   res.send("Backend conectado a Firebase");

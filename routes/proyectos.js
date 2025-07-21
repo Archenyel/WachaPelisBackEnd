@@ -29,15 +29,15 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { nombre, descripcion, inicio, entrega, encargado, programa } = req.body;
+  const { nombre, descripcion, estado, fechaInicio, fechaFin, programaId } = req.body;
 
   const newProject = {
     nombre,
     descripcion,
-    inicio,
-    entrega,
-    encargado,
-    programa,
+    estado,
+    fechaInicio,
+    fechaFin,
+    programaId,
   };
 
   try {
@@ -48,14 +48,31 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { nombre, descripcion, inicio, entrega, encargado,programa } = req.body;
+  const { nombre, descripcion, estado, fechaInicio, fechaFin, programaId } = req.body;
 
   try {
     const docRef = db.collection("proyectos").doc(id);
-    await docRef.update({ nombre, descripcion, inicio, entrega, encargado, programa });
-    res.json({ message: "Proyecto actualizado correctamente" });
+    
+    const updateData = {
+      nombre, 
+      descripcion, 
+      estado, 
+      fechaInicio, 
+      fechaFin, 
+      programaId,
+    };
+    
+    await docRef.update(updateData);
+    
+    const proyectoActualizado = {
+      id,
+      ...updateData
+    };
+    
+    res.json(proyectoActualizado);
+    
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

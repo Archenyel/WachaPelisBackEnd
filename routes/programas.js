@@ -29,12 +29,13 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { nombre, descripcion, portafolio } = req.body;
+  const { nombre, descripcion, portafolioId, fecha } = req.body;
 
   const newPrograma = {
     nombre,
     descripcion,
-    portafolio,
+    portafolioId,
+    fecha
   };
 
   try {
@@ -45,13 +46,13 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { nombre, descripcion, portafolio } = req.body;
+  const { nombre, descripcion, portafolioId, fecha } = req.body;
 
   try {
     const docRef = db.collection("programas").doc(id);
-    await docRef.update({ nombre, descripcion, portafolio });
+    await docRef.update({ nombre, descripcion, portafolioId, fecha });
     res.json({ message: "Programa actualizado correctamente" });
   } catch (error) {
     res.status(500).json({ error: error.message });

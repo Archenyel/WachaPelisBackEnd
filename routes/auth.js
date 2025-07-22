@@ -30,7 +30,7 @@ router.post("/login", async (req, res) => {
     return res.status(401).json({ error: "Credenciales incorrectas" });
   }
 
-  res.status(200).json({ message: "Login correcto", rol: user.rol });
+  res.status(200).json({ message: "Login correcto", rol: user.rol, id: userDoc.id, usuario: user.usuario });
 });
 
 router.post("/registro/alumnos", async (req, res) => {

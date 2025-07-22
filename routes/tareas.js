@@ -28,9 +28,20 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.get("/proyecto/:proyectoId", async (req, res) => {
+  const { proyectoId } = req.params;
+  try {
+    const snapshot = await db.collection("tareas").where("proyectoId", "==", proyectoId).get();
+    const tasks = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    res.json(tasks);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.post("/nuevaTarea", async (req, res) => {
-  const { titulo, descripcion, estado, proyecto } = req.body;
-  const newTask = { titulo, descripcion, estado, proyecto };
+  const { titulo, descripcion, estado, prioridad, responsable, progreso, proyectoId, comentarios } = req.body;
+  const newTask = { titulo, descripcion, estado, prioridad, responsable, progreso, proyectoId, comentarios };
 
   try {
     const docRef = await db.collection("tareas").add(newTask);
@@ -64,13 +75,45 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-
-router.patch("/:id", async (req, res) => {
+router.put("/actualizarEstado/:id", async (req, res) => {
   const { id } = req.params;
-  const { titulo, descripcion, estado, proyecto } = req.body;
+  const { estado } = req.body;
+
   try {
     const docRef = db.collection("tareas").doc(id);
-    await docRef.update({ titulo, descripcion, estado, proyecto });
+    await docRef.update({ estado });
+    res.json({ message: "Estado de la tarea actualizado correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.put("/archivoUrl/:id", async (req, res) => {
+  const { id } = req.params;
+  const { archivoUrl } = req.body;
+  try {
+    const docRef = db.collection("tareas").doc(id);
+    await docRef.update({ archivoUrl });
+    res.json({ message: "URL del archivo actualizado correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { titulo, descripcion, estado, prioridad, responsable, progreso, proyectoId, } = req.body;
+  const comentarios = req.body.comentarios || [];
+  try {
+    const docRef = db.collection("tareas").doc(id);
+
+    if (comentarios.length > 0) {
+      await docRef.update({ titulo, descripcion, estado, prioridad, responsable, progreso, proyectoId, comentarios });
+    }
+    else {
+      await docRef.update({ titulo, descripcion, estado, prioridad, responsable, progreso, proyectoId });
+    }
+
     res.json({ message: "Tarea actualizada correctamente" });
   } catch (error) {
     res.status(500).json({ error: error.message });

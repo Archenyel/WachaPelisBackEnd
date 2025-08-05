@@ -29,7 +29,7 @@ router.get("/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-  const { nombre, descripcion, estado, fechaInicio, fechaFin, programaId } = req.body;
+  const { nombre, descripcion, estado, fechaInicio, fechaFin, programaId, tipo } = req.body;
 
   const newProject = {
     nombre,
@@ -38,6 +38,7 @@ router.post("/", async (req, res) => {
     fechaInicio,
     fechaFin,
     programaId,
+    tipo,
   };
 
   try {
@@ -50,7 +51,7 @@ router.post("/", async (req, res) => {
 
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { nombre, descripcion, estado, fechaInicio, fechaFin, programaId } = req.body;
+  const { nombre, descripcion, estado, fechaInicio, fechaFin, programaId, tipo } = req.body;
 
   try {
     const docRef = db.collection("proyectos").doc(id);
@@ -62,6 +63,7 @@ router.put("/:id", async (req, res) => {
       fechaInicio, 
       fechaFin, 
       programaId,
+      tipo,
     };
     
     await docRef.update(updateData);
@@ -89,11 +91,11 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-router.put("/asignarAlumno", async (req, res) => {
+router.put("/asignarAlumno/asignar", async (req, res) => {
 
   const { idProyecto, idAlumno } = req.body;
-
   console.log(`Asignando alumno ${idAlumno} al proyecto ${idProyecto}`);
+
   try {
     const proyectoRef = db.collection("proyectos").doc(idProyecto);
     const proyectoDoc = await proyectoRef.get();

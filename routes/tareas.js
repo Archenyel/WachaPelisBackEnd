@@ -43,6 +43,10 @@ router.post("/nuevaTarea", async (req, res) => {
   const { titulo, descripcion, estado, prioridad, responsable, progreso, proyectoId, comentarios } = req.body;
   const newTask = { titulo, descripcion, estado, prioridad, responsable, progreso, proyectoId, comentarios };
 
+  if (!comentarios) {
+    newTask.comentarios = [];
+  }
+
   try {
     const docRef = await db.collection("tareas").add(newTask);
     res.status(201).json({ id: docRef.id, ...newTask });

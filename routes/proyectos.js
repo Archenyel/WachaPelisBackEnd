@@ -147,4 +147,30 @@ router.put("/quitarAlumno", async (req, res) => {
   }
 });
 
+router.get("/alumnos/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const proyectoRef = db.collection("proyectos").doc(id);
+    const proyectoDoc = await proyectoRef.get();
+
+    if (!proyectoDoc.exists) {
+      return res.status(404).json({ error: "Proyecto no encontrado" });
+    }
+
+    const proyectoData = proyectoDoc.data();
+    const alumnosAsignados = proyectoData.alumnos || [];
+
+    const alumnosPromises = alumnosAsignados.map(async (alumnoId) => {
+      const alumnoDoc = await db.collection("usuarios").doc(alumnoId).get();
+      return { id: alumnoDoc.id, ...alumnoDoc.data() };
+    });
+
+    const alumnos = await Promise.all(alumnosPromises);
+    res.json({ alumnos });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;

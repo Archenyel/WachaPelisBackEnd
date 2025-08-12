@@ -28,6 +28,17 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.get("/alumno/:idAlumno", async (req, res) => {
+  const { idAlumno } = req.params;
+  try {
+    const snapshot = await db.collection("proyectos").where("liderProyecto", "==", idAlumno).get();
+    const proyectos = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    res.json(proyectos);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.post("/", async (req, res) => {
   const { nombre, descripcion, estado, fechaInicio, fechaFin, programaId, tipo } = req.body;
 
@@ -93,7 +104,7 @@ router.delete("/:id", async (req, res) => {
 
 router.put("/asignarAlumno/asignar", async (req, res) => {
 
-  const { idProyecto, idAlumno } = req.body;
+  const { idProyecto, idAlumno, esLider } = req.body;
   console.log(`Asignando alumno ${idAlumno} al proyecto ${idProyecto}`);
 
   try {
@@ -113,6 +124,10 @@ router.put("/asignarAlumno/asignar", async (req, res) => {
 
     alumnosAsignados.push(idAlumno);
     await proyectoRef.update({ alumnos: alumnosAsignados });
+
+    if (esLider) {
+      await db.collection("proyectos").doc(idProyecto).update({ liderProyecto: idAlumno });
+    }
 
     res.json({ message: "Alumno asignado al proyecto correctamente" });
   } catch (error) {

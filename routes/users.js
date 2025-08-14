@@ -29,6 +29,23 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { nombre, email, telefono, descripcion } = req.body;
+
+  try {
+    await db.collection("usuarios").doc(id).update({
+      nombre,
+      email,
+      telefono,
+      descripcion,
+    });
+    res.json({ message: "Usuario actualizado correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.patch("/editadmin/:id", async (req, res) => {
   const { id } = req.params;
   const { usuario, email } = req.body;

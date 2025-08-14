@@ -4,9 +4,9 @@ const { Storage } = require("@google-cloud/storage");
 const multer = require("multer");
 const cors = require("cors");
 //Claves para desarrollo
-//const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS_JSON);
+const serviceAccount = JSON.parse(process.env.FIREBASE_CREDENTIALS_JSON);
 //Claves para produccion
-const serviceAccount = require("../claves/firebaseClave.json");
+//const serviceAccount = require("../claves/firebaseClave.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -17,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 const bucketName = "archivos-uteq-2025";
-const keyFilename = "../claves/uteq-465920-b0768567d841.json"; // Asegúrate de que esta ruta sea correcta
+const keyFilename = "../claves/uteq-465920-b0768567d841.json";
 const projectId = "uteq-465920";
 
 const storage = new Storage({
@@ -44,7 +44,6 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     metadata: {
       contentType: req.file.mimetype,
     },
-    public: true, // <-- Esta es la clave
   });
 
   blobStream.on("error", (err) => {

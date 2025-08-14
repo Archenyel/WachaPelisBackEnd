@@ -21,7 +21,7 @@ const keyFilename = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
 const projectId = "uteq-465920";
 
 const storage = new Storage({
-  keyFilename: keyFilename,
+  credentials: keyFilename,
   projectId: projectId,
 });
 

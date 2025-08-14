@@ -17,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 const bucketName = "archivos-uteq-2025";
-const keyFilename = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+const keyFilename = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS);
 const projectId = "uteq-465920";
 
 const storage = new Storage({

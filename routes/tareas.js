@@ -183,6 +183,57 @@ router.put("/actualizarEstado/:id", async (req, res) => {
   }
 });
 
+router.put("/:id/firmar", async (req, res) => {
+  const { id } = req.params;
+  const { comentarioFirma } = req.body;
+  const { firmadoPor } = req.body;
+
+  try {
+    const docRef = db.collection("tareas").doc(id);
+    // Verificar que la tarea existe
+    const doc = await docRef.get(); 
+    if (!doc.exists) {
+      return res.status(404).json({ error: "Tarea no encontrada" });
+    }
+    const updateData = {
+      estado: "Hecho",
+      firmada: true,
+      fechaActualizacion: admin.firestore.FieldValue.serverTimestamp(),
+      comentarioFirma,
+      firmadoPor
+    };
+    
+
+    await docRef.update(updateData);
+    // Obtener la tarea actualizada
+
+    const updatedDoc = await docRef.get();
+    const tarea = { id: doc.id, ...updatedDoc.data() };
+
+    res.json({ message: "Tarea firmada correctamente", tarea });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;  
+  try {
+    const docRef = db.collection("tareas").doc(id);
+    
+    // Verificar que la tarea existe
+    const doc = await docRef.get();
+    if (!doc.exists) {
+      return res.status(404).json({ error: "Tarea no encontrada" });
+    }
+
+    await docRef.delete();
+    res.json({ message: "Tarea eliminada correctamente" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 router.put("/archivoUrl/:id", async (req, res) => {
   const { id } = req.params;
   const { archivoUrl } = req.body;
